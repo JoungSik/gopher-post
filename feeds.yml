@@ -1,0 +1,4 @@
+feeds:
+  - name: "JoungSik의 기술 블로그"
+    url: "https://joungsik.github.io"
+    rss: "https://joungsik.github.io/post/index.xml"
