@@ -8,3 +8,6 @@ feeds:
   - name: "GeekNews"
     url: "https://news.hada.io/"
     rss: "https://feeds.feedburner.com/geeknews-feed"
+  - name: "올리브영 테크블로그"
+    url: "https://oliveyoung.tech"
+    rss: "https://oliveyoung.tech/rss.xml"
