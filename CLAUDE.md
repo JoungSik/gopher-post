@@ -63,21 +63,21 @@ gopher-post/
 This is an automated RSS aggregation and email delivery service with the following components:
 
 ### Core Functionality
-- **Feed Processing**: Reads RSS/Atom feeds from feeds.yml configuration
+- **Feed Processing**: Reads RSS and Atom feeds from feeds.yml configuration
 - **Content Collection**: Automatically collects latest articles from feeds (24-hour window)
 - **Email Delivery**: Sends new posts to subscribers via email with Korean HTML templates
 - **Environment Configuration**: Uses .env files and environment variables for SMTP settings
 - **Scheduling**: Designed for daily automated runs via cron or container orchestration
 
 ### Key Components (implemented)
-- **Feed Parser** (`internal/feed/parser.go`): Uses `gofeed` library for RSS/Atom parsing
+- **Feed Parser** (`internal/feed/parser.go`): Uses `gofeed` library for RSS and Atom parsing
 - **Email Service** (`internal/email/smtp.go`): SMTP integration using `gopkg.in/mail.v2`
 - **Template Engine** (`internal/template/template.go`): Korean HTML email template rendering
 - **Configuration** (`internal/config/config.go`): YAML parsing and environment variable management
 - **Main Application** (`cmd/main.go`): Orchestrates all services with .env loading
 
 ### Dependencies
-- RSS/XML parsing: `github.com/mmcdole/gofeed v1.2.1`
+- RSS/Atom parsing: `github.com/mmcdole/gofeed v1.2.1`
 - Email/SMTP: `gopkg.in/mail.v2 v2.3.1`
 - YAML parsing: `gopkg.in/yaml.v3 v3.0.1`
 - Environment variables: `github.com/joho/godotenv v1.5.1`
@@ -122,7 +122,7 @@ recipients:
 - Suitable for scheduled execution via cron or container orchestration
 
 ### Current Implementation Status
-- ✅ RSS feed parsing with date filtering (24-hour window)
+- ✅ RSS and Atom feed parsing with date filtering (24-hour window)
 - ✅ SMTP email delivery with HTML templates
 - ✅ Korean localization and responsive design
 - ✅ Docker containerization

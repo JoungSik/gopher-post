@@ -3,6 +3,8 @@ package feed
 import (
 	"fmt"
 	"log"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/JoungSik/gopher-post/internal/config"
@@ -28,11 +30,27 @@ func NewParser() *Parser {
 	}
 }
 
+func extractTextFromHTML(htmlContent string) string {
+	if htmlContent == "" {
+		return ""
+	}
+
+	// Remove HTML tags
+	re := regexp.MustCompile(`<[^>]*>`)
+	text := re.ReplaceAllString(htmlContent, "")
+
+	// Clean up extra whitespace
+	text = regexp.MustCompile(`\s+`).ReplaceAllString(text, " ")
+	text = strings.TrimSpace(text)
+
+	return text
+}
+
 func (p *Parser) ParseFeeds(feeds []config.Feed) ([]Article, error) {
 	var articles []Article
 
 	for _, feed := range feeds {
-		log.Printf("Parsing feed: %s (%s)", feed.Name, feed.RSS)
+		log.Printf("Parsing RSS/Atom feed: %s (%s)", feed.Name, feed.RSS)
 		feedData, err := p.parser.ParseURL(feed.RSS)
 		if err != nil {
 			log.Printf("Error parsing feed %s: %v", feed.Name, err)
@@ -65,6 +83,10 @@ func (p *Parser) ParseFeeds(feeds []config.Feed) ([]Article, error) {
 			}
 
 			description := item.Description
+			// For Atom feeds, Description is often empty, so fallback to Content
+			if description == "" && item.Content != "" {
+				description = extractTextFromHTML(item.Content)
+			}
 			if len(description) > 300 {
 				description = description[:300] + "..."
 			}
@@ -115,10 +137,19 @@ func (p *Parser) GetRecentArticles(feeds []config.Feed, hours int) ([]Article, e
 				author = item.Author.Name
 			}
 
+			// Handle description for GetRecentArticles too
+			itemDescription := item.Description
+			if itemDescription == "" && item.Content != "" {
+				itemDescription = extractTextFromHTML(item.Content)
+				if len(itemDescription) > 300 {
+					itemDescription = itemDescription[:300] + "..."
+				}
+			}
+
 			article := Article{
 				Title:       item.Title,
 				Link:        item.Link,
-				Description: item.Description,
+				Description: itemDescription,
 				Author:      author,
 				Published:   publishedTime,
 				FeedName:    feed.Name,
