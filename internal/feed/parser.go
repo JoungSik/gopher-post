@@ -69,9 +69,17 @@ func (p *Parser) ParseFeeds(feeds []config.Feed) ([]Article, error) {
 				publishedTime = time.Now()
 			}
 
-			// Only include articles from the last 30 days for testing
-			if time.Since(publishedTime) > 24*time.Hour {
-				log.Printf("Skipping old article: %s (published: %v, age: %v)", item.Title, publishedTime, time.Since(publishedTime))
+			// Only include articles from yesterday (Korean time zone)
+			kst, _ := time.LoadLocation("Asia/Seoul")
+			now := time.Now().In(kst)
+			today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, kst)
+			yesterday := today.AddDate(0, 0, -1)
+
+			// Convert published time to Korean time zone for comparison
+			publishedTimeKST := publishedTime.In(kst)
+
+			if publishedTimeKST.Before(yesterday) || publishedTimeKST.After(today) {
+				log.Printf("Skipping article not from yesterday KST: %s (published: %v KST)", item.Title, publishedTimeKST)
 				continue
 			}
 
@@ -127,8 +135,16 @@ func (p *Parser) GetRecentArticles(feeds []config.Feed, hours int) ([]Article, e
 				continue
 			}
 
-			// Only include articles from the specified hours
-			if time.Since(publishedTime) > time.Duration(hours)*time.Hour {
+			// Only include articles from yesterday (Korean time zone)
+			kst, _ := time.LoadLocation("Asia/Seoul")
+			now := time.Now().In(kst)
+			today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, kst)
+			yesterday := today.AddDate(0, 0, -1)
+
+			// Convert published time to Korean time zone for comparison
+			publishedTimeKST := publishedTime.In(kst)
+
+			if publishedTimeKST.Before(yesterday) || publishedTimeKST.After(today) {
 				continue
 			}
 
