@@ -47,6 +47,12 @@ feeds:
   - name: "inflab"
     url: "https://tech.inflab.com"
     rss: "https://tech.inflab.com/rss.xml"
+  - name: "Github Blog"
+    url: "https://github.blog"
+    rss: "https://github.blog/feed/"
+  - name: "Cloudflare Blog"
+    url: "https://blog.cloudflare.com"
+    rss: "https://blog.cloudflare.com/rss/"
     
 
     
